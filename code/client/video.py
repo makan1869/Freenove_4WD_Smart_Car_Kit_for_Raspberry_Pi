@@ -59,30 +59,38 @@ class VideoStreaming:
 
     def line_detect(self, img):
         if sys.platform.startswith('win') or sys.platform.startswith('darwin'):
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            edges = cv2.Canny(gray, 50, 150 ,apertureSize = 3)
-            lines = cv2.HoughLinesP(edges,1,np.pi/180,100,minLineLength=100,maxLineGap=10)
+            try:
 
-            # lines = cv2.HoughLines(edges, 1, np.pi / 180, 200)
-            if type(lines) is np.ndarray:
-                for line in lines:
-                    rho, theta = line[0]
-                    a = np.cos(theta)
-                    b = np.sin(theta)
-                    x0 = a * rho
-                    y0 = b * rho
-                    x1 = int(x0 + 1000 * (-b))
-                    y1 = int(y0 + 1000 * (a))
-                    x2 = int(x0 - 1000 * (-b))
-                    y2 = int(y0 - 1000 * (a))
-                    cv2.line(gray, (x1, y1), (x2, y2), (0, 0, 255), 2)
+                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                edges = cv2.Canny(gray, 50, 150 ,apertureSize = 3)
+                lines = cv2.HoughLinesP(edges,1,np.pi/180,100,minLineLength=100,maxLineGap=10)
+                # lines = cv2.HoughLines(edges, 1, np.pi / 180, 200)
+                if type(lines) is np.ndarray:
+                    for line in lines:
+                        x1,y1,x2,y2 = line[0]
+                        if abs(y1 - y2) > 30:
+                            cv2.line(gray,(x1,y1),(x2,y2),(0,255,0),2)
+                        # rho, theta = line[0]
+                        # a = np.cos(theta)
+                        # b = np.sin(theta)
+                        # x0 = a * rho
+                        # y0 = b * rho
+                        # x1 = int(x0 + 1000 * (-b))
+                        # y1 = int(y0 + 1000 * (a))
+                        # x2 = int(x0 - 1000 * (-b))
+                        # y2 = int(y0 - 1000 * (a))
+                        # cv2.line(gray, (x1, y1), (x2, y2), (0, 0, 255), 2)
 
-            # plt.subplot(121),plt.imshow(img,cmap = 'gray')
-            # plt.title('Original Image'), plt.xticks([]), plt.yticks([])
-            # plt.subplot(122),plt.imshow(edges,cmap = 'gray')
-            # plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
-            # plt.show()
-            cv2.imwrite('video.jpg', gray)
+                # plt.subplot(121),plt.imshow(img,cmap = 'gray')
+                # plt.title('Original Image'), plt.xticks([]), plt.yticks([])
+                # plt.subplot(122),plt.imshow(edges,cmap = 'gray')
+                # plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
+                # plt.show()
+                cv2.imwrite('video.jpg', gray)
+            except Exception as e:
+                print(e)
+                cv2.imwrite('video.jpg', img)
+
 
         else:
             cv2.imwrite('video.jpg', img)
