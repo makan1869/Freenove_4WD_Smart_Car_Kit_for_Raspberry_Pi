@@ -26,7 +26,7 @@ class ClientWindow(QMainWindow, Ui_Client):
         self.receive_thread = None
         super(ClientWindow, self).__init__()
         self.setupUi(self)
-        self.target_host = self.IP.text()
+        self.target_host = '192.168.8.123'
         self.video_streaming = None
         self.control = None
         self.servo1 = 90
@@ -147,18 +147,18 @@ class ClientWindow(QMainWindow, Ui_Client):
         if not self.connected:
             return
 
-        if event.key() == Qt.Key_Up:
+        if event.key() == Qt.Key.Key_Up:
             self.on_btn_up()
-        elif event.key() == Qt.Key_Left:
+        elif event.key() == Qt.Key.Key_Left:
             self.on_btn_left()
-        elif event.key() == Qt.Key_Down:
+        elif event.key() == Qt.Key.Key_Down:
             self.on_btn_down()
-        elif event.key() == Qt.Key_Right:
+        elif event.key() == Qt.Key.Key_Right:
             self.on_btn_right()
-        elif event.key() == Qt.Key_Home:
+        elif event.key() == Qt.Key.Key_Home:
             self.on_btn_home()
 
-        if event.key() == Qt.Key_Q:
+        if event.key() == Qt.Key.Key_Q:
             if self.Btn_Mode1.isChecked():
                 self.Btn_Mode2.setChecked(True)
             elif self.Btn_Mode2.isChecked():
@@ -168,7 +168,7 @@ class ClientWindow(QMainWindow, Ui_Client):
             elif self.Btn_Mode4.isChecked():
                 self.Btn_Mode1.setChecked(True)
 
-        if event.key() == Qt.Key_L:
+        if event.key() == Qt.Key.Key_L:
             count = 0
             if self.checkBox_Led_Mode1.isChecked():
                 self.checkBox_Led_Mode2.setChecked(True)
@@ -188,47 +188,47 @@ class ClientWindow(QMainWindow, Ui_Client):
             if count == 4:
                 self.checkBox_Led_Mode1.setChecked(True)
 
-        if event.key() == Qt.Key_C:
+        if event.key() == Qt.Key.Key_C:
             self.on_btn_connect()
-        if event.key() == Qt.Key_V:
+        if event.key() == Qt.Key.Key_V:
             self.on_btn_video()
 
-        if event.key() == Qt.Key_1:
+        if event.key() == Qt.Key.Key_1:
             if self.checkBox_Led1.isChecked():
                 self.checkBox_Led1.setChecked(False)
             else:
                 self.checkBox_Led1.setChecked(True)
-        elif event.key() == Qt.Key_2:
+        elif event.key() == Qt.Key.Key_2:
             if self.checkBox_Led2.isChecked():
                 self.checkBox_Led2.setChecked(False)
             else:
                 self.checkBox_Led2.setChecked(True)
-        elif event.key() == Qt.Key_3:
+        elif event.key() == Qt.Key.Key_3:
             if self.checkBox_Led3.isChecked():
                 self.checkBox_Led3.setChecked(False)
             else:
                 self.checkBox_Led3.setChecked(True)
-        elif event.key() == Qt.Key_4:
+        elif event.key() == Qt.Key.Key_4:
             if self.checkBox_Led4.isChecked():
                 self.checkBox_Led4.setChecked(False)
             else:
                 self.checkBox_Led4.setChecked(True)
-        elif event.key() == Qt.Key_5:
+        elif event.key() == Qt.Key.Key_5:
             if self.checkBox_Led5.isChecked():
                 self.checkBox_Led5.setChecked(False)
             else:
                 self.checkBox_Led5.setChecked(True)
-        elif event.key() == Qt.Key_6:
+        elif event.key() == Qt.Key.Key_6:
             if self.checkBox_Led6.isChecked():
                 self.checkBox_Led6.setChecked(False)
             else:
                 self.checkBox_Led6.setChecked(True)
-        elif event.key() == Qt.Key_7:
+        elif event.key() == Qt.Key.Key_7:
             if self.checkBox_Led7.isChecked():
                 self.checkBox_Led7.setChecked(False)
             else:
                 self.checkBox_Led7.setChecked(True)
-        elif event.key() == Qt.Key_8:
+        elif event.key() == Qt.Key.Key_8:
             if self.checkBox_Led8.isChecked():
                 self.checkBox_Led8.setChecked(False)
             else:
@@ -237,19 +237,19 @@ class ClientWindow(QMainWindow, Ui_Client):
         if event.isAutoRepeat():
             pass
         else:
-            if event.key() == Qt.Key_W:
+            if event.key() == Qt.Key.Key_W:
                 self.on_btn_forward()
                 self.Key_W = True
-            elif event.key() == Qt.Key_S:
+            elif event.key() == Qt.Key.Key_S:
                 self.on_btn_backwards()
                 self.Key_S = True
-            elif event.key() == Qt.Key_A:
+            elif event.key() == Qt.Key.Key_A:
                 self.on_btn_turn_left()
                 self.Key_A = True
-            elif event.key() == Qt.Key_D:
+            elif event.key() == Qt.Key.Key_D:
                 self.on_btn_turn_right()
                 self.Key_D = True
-            elif event.key() == Qt.Key_Space:
+            elif event.key() == Qt.Key.Key_Space:
                 self.on_btn_buzzer()
                 self.Key_Space = True
 
@@ -257,26 +257,26 @@ class ClientWindow(QMainWindow, Ui_Client):
         if not self.connected:
             return
 
-        if event.key() == Qt.Key_W:
+        if event.key() == Qt.Key.Key_W:
             time.sleep(0.05)
-            if event.key() == Qt.Key_W:
+            if event.key() == Qt.Key.Key_W:
                 if not (event.isAutoRepeat()) and self.Key_W is True:
                     self.on_btn_stop()
                     self.Key_W = False
-        elif event.key() == Qt.Key_A:
+        elif event.key() == Qt.Key.Key_A:
             if not (event.isAutoRepeat()) and self.Key_A is True:
                 self.on_btn_stop()
                 self.Key_A = False
-        elif event.key() == Qt.Key_S:
+        elif event.key() == Qt.Key.Key_S:
             if not (event.isAutoRepeat()) and self.Key_S is True:
                 self.on_btn_stop()
                 self.Key_S = False
-        elif event.key() == Qt.Key_D:
+        elif event.key() == Qt.Key.Key_D:
             if not (event.isAutoRepeat()) and self.Key_D is True:
                 self.on_btn_stop()
                 self.Key_D = False
 
-        if event.key() == Qt.Key_Space:
+        if event.key() == Qt.Key.Key_Space:
             if not (event.isAutoRepeat()) and self.Key_Space is True:
                 self.on_btn_buzzer()
                 self.Key_Space = False
@@ -501,7 +501,7 @@ class ClientWindow(QMainWindow, Ui_Client):
 
     def on_btn_connect(self):
         if not self.connected:
-            self.target_host = self.IP.text()
+            #self.target_host = self.IP.text()
             try:
                 self.control = Control(self.target_host)
                 self.receive_thread = Thread(target=self.recv_message)

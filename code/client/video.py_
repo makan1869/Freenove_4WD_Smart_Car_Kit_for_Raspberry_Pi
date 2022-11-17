@@ -2,11 +2,11 @@ import io
 import socket
 import struct
 import sys
+import time
 
 import cv2
 import numpy as np
 from PIL import Image
-from matplotlib import pyplot as plt
 
 
 class VideoStreaming:
@@ -57,36 +57,6 @@ class VideoStreaming:
                 self.face_y = 0
         cv2.imwrite('video.jpg', img)
 
-    def line_detect(self, img):
-        if sys.platform.startswith('win') or sys.platform.startswith('darwin'):
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            edges = cv2.Canny(gray, 50, 150 ,apertureSize = 3)
-            lines = cv2.HoughLinesP(edges,1,np.pi/180,100,minLineLength=100,maxLineGap=10)
-
-            # lines = cv2.HoughLines(edges, 1, np.pi / 180, 200)
-            if type(lines) is np.ndarray:
-                for line in lines:
-                    rho, theta = line[0]
-                    a = np.cos(theta)
-                    b = np.sin(theta)
-                    x0 = a * rho
-                    y0 = b * rho
-                    x1 = int(x0 + 1000 * (-b))
-                    y1 = int(y0 + 1000 * (a))
-                    x2 = int(x0 - 1000 * (-b))
-                    y2 = int(y0 - 1000 * (a))
-                    cv2.line(gray, (x1, y1), (x2, y2), (0, 0, 255), 2)
-
-            # plt.subplot(121),plt.imshow(img,cmap = 'gray')
-            # plt.title('Original Image'), plt.xticks([]), plt.yticks([])
-            # plt.subplot(122),plt.imshow(edges,cmap = 'gray')
-            # plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
-            # plt.show()
-            cv2.imwrite('video.jpg', gray)
-
-        else:
-            cv2.imwrite('video.jpg', img)
-
     def start_streaming(self):
         while True:
             try:
@@ -96,8 +66,57 @@ class VideoStreaming:
                 if self.is_valid_image4_bytes(jpg):
                     image = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
                     if self.connected:
-                        self.line_detect(image)
+                        self.face_detect(image)
                         self.connected = False
+            except Exception as e:
+                print(e)
+                break
+
+    def is_valid_jpg(self, jpg_file):
+        b_valid = True
+        try:
+            if jpg_file.split('.')[-1].lower() == 'jpg':
+                with open(jpg_file, 'rb') as f:
+                    buf = f.read()
+                    if not buf.startswith(b'\xff\xd8'):
+                        b_valid = False
+                    elif buf[6:10] in (b'JFIF', b'Exif'):
+                        if not buf.rstrip(b'\0\r\n').endswith(b'\xff\xd9'):
+                            b_valid = False
+                    else:
+                        try:
+                            Image.open(f).verify()
+                        except:
+                            b_valid = False
+            else:
+                return b_valid
+        except:
+            pass
+        return b_valid
+
+    def display_video(self):
+        self.connected = False
+        print("Refreshing Video")
+        try:
+            if self.is_valid_jpg('video.jpg'):
+                image = cv2.imread('video.jpg', cv2.IMREAD_GRAYSCALE)
+                cv2.imshow('video', image)
+        except Exception as e:
+            print(e)
+        self.connected = True
+
+    def start_processing(self):
+        while True:
+            try:
+                stream_bytes = self.video_connection.read(4)
+                leng = struct.unpack('<L', stream_bytes[:4])
+                jpg = self.video_connection.read(leng[0])
+                if self.is_valid_image4_bytes(jpg):
+                    image = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
+                    if self.connected:
+                        cv2.imwrite('video.jpg', image)
+                        self.connected = False
+                time.sleep(1)
             except Exception as e:
                 print(e)
                 break
