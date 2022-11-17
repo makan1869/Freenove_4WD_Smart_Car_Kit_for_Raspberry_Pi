@@ -62,15 +62,15 @@ class VideoStreaming:
         if sys.platform.startswith('win') or sys.platform.startswith('darwin'):
             try:
                 stamp = time.time()
-                cv2.imwrite("pictures/%s.original.jpg"%stamp, img)
+                # cv2.imwrite("pictures/%s.original.jpg"%stamp, img)
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                cv2.imwrite("pictures/%s.gray.jpg"%stamp, gray)
+                # cv2.imwrite("pictures/%s.gray.jpg"%stamp, gray)
                 ksize = (5, 5)
                 blur = cv2.blur(gray, ksize)
-                cv2.imwrite("pictures/%s.blur.jpg"%stamp, blur)
+                # cv2.imwrite("pictures/%s.blur.jpg"%stamp, blur)
                 ret, thresh2 = cv2.threshold(blur, 100, 255, cv2.THRESH_BINARY)
                 edges = cv2.Canny(thresh2, 50, 150 ,apertureSize = 3)
-                cv2.imwrite("pictures/%s.edges.jpg"%stamp, edges)
+                # cv2.imwrite("pictures/%s.edges.jpg"%stamp, edges)
                 self.lines = cv2.HoughLinesP(edges,1,np.pi/180,100,minLineLength=10,maxLineGap=100)
                 # self.lines = cv2.HoughLines(edges, 1, np.pi / 180, 200)
                 if type(self.lines) is np.ndarray:
@@ -94,7 +94,7 @@ class VideoStreaming:
                 # plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
                 # plt.show()
                 cv2.imwrite('video.jpg', gray)
-                cv2.imwrite("pictures/%s.lines.jpg"%stamp, gray)
+                # cv2.imwrite("pictures/%s.lines.jpg"%stamp, gray)
             except Exception as e:
                 print(e)
                 cv2.imwrite('video.jpg', img)
