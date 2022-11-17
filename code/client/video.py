@@ -2,7 +2,7 @@ import io
 import socket
 import struct
 import sys
-
+import time
 import cv2
 import numpy as np
 from PIL import Image
@@ -61,22 +61,22 @@ class VideoStreaming:
     def line_detect(self, img):
         if sys.platform.startswith('win') or sys.platform.startswith('darwin'):
             try:
-
-                # hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+                stamp = time.time()
+                cv2.imwrite("pictures/%s.original.jpg"%stamp, img)
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                lower_white = np.array([0,0,0], dtype=np.uint8)
-                upper_white = np.array([0,0,255], dtype=np.uint8)
-                mask = cv2.inRange(img, lower_white, upper_white)
-                white = cv2.bitwise_and(img,img, mask= mask)
-
-                edges = cv2.Canny(gray, 50, 150 ,apertureSize = 3)
-                self.lines = cv2.HoughLinesP(edges,1,np.pi/180,100,minLineLength=100,maxLineGap=10)
-                # lines = cv2.HoughLines(edges, 1, np.pi / 180, 200)
+                cv2.imwrite("pictures/%s.gray.jpg"%stamp, gray)
+                ksize = (5, 5)
+                blur = cv2.blur(gray, ksize)
+                cv2.imwrite("pictures/%s.blur.jpg"%stamp, blur)
+                ret, thresh2 = cv2.threshold(blur, 100, 255, cv2.THRESH_BINARY)
+                edges = cv2.Canny(thresh2, 50, 150 ,apertureSize = 3)
+                cv2.imwrite("pictures/%s.edges.jpg"%stamp, edges)
+                self.lines = cv2.HoughLinesP(edges,1,np.pi/180,100,minLineLength=10,maxLineGap=100)
+                # self.lines = cv2.HoughLines(edges, 1, np.pi / 180, 200)
                 if type(self.lines) is np.ndarray:
                     for line in self.lines:
                         x1,y1,x2,y2 = line[0]
-                        if abs(y1 - y2) > 30:
-                            cv2.line(gray,(x1,y1),(x2,y2),(0,255,0),2)
+                        cv2.line(gray,(x1,y1),(x2,y2),(0,255,0),2)
                         # rho, theta = line[0]
                         # a = np.cos(theta)
                         # b = np.sin(theta)
@@ -94,6 +94,7 @@ class VideoStreaming:
                 # plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
                 # plt.show()
                 cv2.imwrite('video.jpg', gray)
+                cv2.imwrite("pictures/%s.lines.jpg"%stamp, gray)
             except Exception as e:
                 print(e)
                 cv2.imwrite('video.jpg', img)
