@@ -15,6 +15,7 @@ class VideoStreaming:
         self.video_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.face_cascade = cv2.CascadeClassifier(r'haarcascade_frontalface_default.xml')
         self.connected = True
+        self.lines = None
         self.face_x = 0
         self.face_y = 0
         try:
@@ -61,12 +62,18 @@ class VideoStreaming:
         if sys.platform.startswith('win') or sys.platform.startswith('darwin'):
             try:
 
+                # hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                lower_white = np.array([0,0,0], dtype=np.uint8)
+                upper_white = np.array([0,0,255], dtype=np.uint8)
+                mask = cv2.inRange(img, lower_white, upper_white)
+                white = cv2.bitwise_and(img,img, mask= mask)
+
                 edges = cv2.Canny(gray, 50, 150 ,apertureSize = 3)
-                lines = cv2.HoughLinesP(edges,1,np.pi/180,100,minLineLength=100,maxLineGap=10)
+                self.lines = cv2.HoughLinesP(white,1,np.pi/180,100,minLineLength=100,maxLineGap=10)
                 # lines = cv2.HoughLines(edges, 1, np.pi / 180, 200)
-                if type(lines) is np.ndarray:
-                    for line in lines:
+                if type(self.lines) is np.ndarray:
+                    for line in self.lines:
                         x1,y1,x2,y2 = line[0]
                         if abs(y1 - y2) > 30:
                             cv2.line(gray,(x1,y1),(x2,y2),(0,255,0),2)
