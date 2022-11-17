@@ -70,7 +70,7 @@ class VideoStreaming:
                 white = cv2.bitwise_and(img,img, mask= mask)
 
                 edges = cv2.Canny(gray, 50, 150 ,apertureSize = 3)
-                self.lines = cv2.HoughLinesP(white,1,np.pi/180,100,minLineLength=100,maxLineGap=10)
+                self.lines = cv2.HoughLinesP(edges,1,np.pi/180,100,minLineLength=100,maxLineGap=10)
                 # lines = cv2.HoughLines(edges, 1, np.pi / 180, 200)
                 if type(self.lines) is np.ndarray:
                     for line in self.lines:
