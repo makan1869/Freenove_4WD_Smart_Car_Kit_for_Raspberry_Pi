@@ -6,7 +6,14 @@ import time
 import cv2
 import numpy as np
 from PIL import Image
+from enum import Enum
 from matplotlib import pyplot as plt
+
+
+class Direction(Enum):
+    RIGHT = 1
+    LEFT = 2
+    STRAIGHT = 3
 
 
 class VideoStreaming:
@@ -19,6 +26,7 @@ class VideoStreaming:
         self.face_x = 0
         self.face_y = 0
         self.debug = False
+        self.ksize = (5, 5)
         try:
             self.video_socket.connect((ip, 8000))
             self.video_connection = self.video_socket.makefile('rb')
@@ -66,17 +74,13 @@ class VideoStreaming:
                 if self.debug:
                     cv2.imwrite("pictures/%s.original.jpg" % stamp, img)
                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                if self.debug:
-                    cv2.imwrite("pictures/%s.gray.jpg"%stamp, gray)
-                ksize = (5, 5)
-                blur = cv2.blur(gray, ksize)
-                if self.debug:
-                    cv2.imwrite("pictures/%s.blur.jpg"%stamp, blur)
-                ret, thresh2 = cv2.threshold(blur, 100, 255, cv2.THRESH_BINARY)
-                edges = cv2.Canny(thresh2, 50, 150, apertureSize=3)
-                if self.debug:
-                    cv2.imwrite("pictures/%s.edges.jpg"%stamp, edges)
-                self.lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 100, minLineLength=10, maxLineGap=100)
+                # if self.debug:
+                #     cv2.imwrite("pictures/%s.gray.jpg" % stamp, gray)
+
+                blur = cv2.blur(gray, self.ksize)
+                ret, white = cv2.threshold(blur, 150, 255, cv2.THRESH_BINARY_INV)
+                edges = cv2.Canny(white, 50, 150, apertureSize=3)
+                self.lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 80, minLineLength=20, maxLineGap=10)
                 # self.lines = cv2.HoughLines(edges, 1, np.pi / 180, 200)
                 if type(self.lines) is np.ndarray:
                     for line in self.lines:
@@ -99,8 +103,6 @@ class VideoStreaming:
                 # plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
                 # plt.show()
                 cv2.imwrite('video.jpg', gray)
-                if self.debug:
-                    cv2.imwrite("pictures/%s.lines.jpg"%stamp, gray)
             except Exception as e:
                 print(e)
                 cv2.imwrite('video.jpg', img)
