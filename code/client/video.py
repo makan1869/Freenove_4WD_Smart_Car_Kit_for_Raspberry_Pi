@@ -3,10 +3,11 @@ import socket
 import struct
 import sys
 import time
+from enum import Enum
+
 import cv2
 import numpy as np
 from PIL import Image
-from enum import Enum
 from matplotlib import pyplot as plt
 
 from steering import *

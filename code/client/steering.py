@@ -1,22 +1,26 @@
 import math
 from command import COMMAND, COMMAND_SEPARATOR, COMMAND_TERMINATOR
 import statistics
+import collections
 
 class Steering:
+
+    buffer = collections.deque(maxlen=5)
+
     def __init__(self, control):
         self.control = control
+        self.calibrate_servo()
 
     def steer(self, lines):
         if lines is not None and len(lines) > 0:
+            self.buffer.append(lines)
             line_angles = []
-            for line in lines:
-                x1,y1,x2,y2 = line[0]
-                line_angles.append(self.line_to_deg([x1, y1, x2, y2]))
-                print(line_angles)
-                turn_direction,turn_angle = self.get_turn(line_angles)
-                # positives
-            self.forward()
-            print('forward')
+            for buffer_item in self.buffer:
+                for line in buffer_item:
+                    x1,y1,x2,y2 = line[0]
+                    line_angles.append(self.line_to_deg([x1, y1, x2, y2]))
+            # print(line_angles)
+            self.get_turn(line_angles)
         else:
             self.stop()
             print('stop')
@@ -37,8 +41,8 @@ class Steering:
         self.control.send_data(COMMAND.CMD_MOTOR + forward)
 
     def turn_left(self):
-        turn_left = COMMAND_SEPARATOR + str(-4095) + COMMAND_SEPARATOR + str(-1500) + COMMAND_SEPARATOR + str(
-            1500) + COMMAND_SEPARATOR + str(1500) + COMMAND_TERMINATOR
+        turn_left = COMMAND_SEPARATOR + str(-1000) + COMMAND_SEPARATOR + str(-1000) + COMMAND_SEPARATOR + str(
+            1000) + COMMAND_SEPARATOR + str(1000) + COMMAND_TERMINATOR
         self.control.send_data(COMMAND.CMD_MOTOR + turn_left)
 
     def backwards(self):
@@ -47,26 +51,36 @@ class Steering:
         self.control.send_data(COMMAND.CMD_MOTOR + backwards)
 
     def turn_right(self):
-        turn_right = COMMAND_SEPARATOR + str(1500) + COMMAND_SEPARATOR + str(1500) + COMMAND_SEPARATOR + str(
-            -1500) + COMMAND_SEPARATOR + str(-1500) + COMMAND_TERMINATOR
+        turn_right = COMMAND_SEPARATOR + str(1000) + COMMAND_SEPARATOR + str(1000) + COMMAND_SEPARATOR + str(
+            -1000) + COMMAND_SEPARATOR + str(-1000) + COMMAND_TERMINATOR
         self.control.send_data(COMMAND.CMD_MOTOR + turn_right)
 
     def get_turn(self, line_angles):
         pos = list(filter(lambda angle: angle >= 0 and angle < 175, line_angles))
-        posMedian = None
-        negMedian = None
+        posMedian = 0
+        negMedian = 0
         if pos is not None and len(pos) > 0:
             posMedian = statistics.median(pos)
         neg = list(filter(lambda angle: angle < 0 and angle > -175, line_angles))
         if neg is not None and len(neg) > 0:
             negMedian = statistics.median(neg)
-        # left are positive
+        print(str(posMedian) + ' ' + str(negMedian))
+        # if (abs(posMedian) - abs(negMedian) < -20):
+        if (abs(posMedian) > 165 or abs(negMedian) > -110):
+            print('right')
+            # self.turn_right()
+        # elif (abs(posMedian) - abs(negMedian) > 20):
+        elif (abs(posMedian) < 130 or abs(negMedian) < -150):
+            print('left')
+            # self.turn_left()
+        else:
+            print('forward')
+            # self.forward()
+        pass
 
-        # right are negative
-
-        turn_direction = 0
-        turn_angle = 10
-        return turn_direction, turn_angle
+    def calibrate_servo(self):
+        self.control.send_data(
+            COMMAND.CMD_SERVO + COMMAND_SEPARATOR + '0' + COMMAND_SEPARATOR + str(96) + COMMAND_TERMINATOR)
 
 if __name__ == '__main__':
     pass
