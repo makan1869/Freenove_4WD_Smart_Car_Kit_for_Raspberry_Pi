@@ -6,11 +6,12 @@ import time
 import cv2
 import numpy as np
 from PIL import Image
-from matplotlib import pyplot as plt
 
+from steering import *
 
 class VideoStreaming:
-    def __init__(self, ip):
+    def __init__(self, ip, control):
+        self.steering = Steering(control)
         self.video_connection = None
         self.video_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.face_cascade = cv2.CascadeClassifier(r'haarcascade_frontalface_default.xml')
@@ -88,6 +89,7 @@ class VideoStreaming:
                         # y2 = int(y0 - 1000 * (a))
                         # cv2.line(gray, (x1, y1), (x2, y2), (0, 0, 255), 2)
 
+                self.steering.steer(self.lines)
                 # plt.subplot(121),plt.imshow(img,cmap = 'gray')
                 # plt.title('Original Image'), plt.xticks([]), plt.yticks([])
                 # plt.subplot(122),plt.imshow(edges,cmap = 'gray')
@@ -117,7 +119,6 @@ class VideoStreaming:
             except Exception as e:
                 print(e)
                 break
-
 
 if __name__ == '__main__':
     pass

@@ -511,7 +511,7 @@ class ClientWindow(QMainWindow, Ui_Client):
                 print('control error')
                 return
             try:
-                self.video_streaming = VideoStreaming(self.target_host)
+                self.video_streaming = VideoStreaming(self.target_host, self.control)
                 self.streaming_thread = Thread(target=self.video_streaming.start_streaming)
                 self.streaming_thread.start()
             except Exception as e:
