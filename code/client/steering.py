@@ -35,13 +35,13 @@ class Steering:
         self.control.send_data(COMMAND.CMD_MOTOR + stop)
 
     def forward(self):
-        forward = COMMAND_SEPARATOR + str(700) + COMMAND_SEPARATOR + str(700) + COMMAND_SEPARATOR + str(
-            700) + COMMAND_SEPARATOR + str(700) + COMMAND_TERMINATOR
+        forward = COMMAND_SEPARATOR + str(600) + COMMAND_SEPARATOR + str(600) + COMMAND_SEPARATOR + str(
+            600) + COMMAND_SEPARATOR + str(600) + COMMAND_TERMINATOR
         self.control.send_data(COMMAND.CMD_MOTOR + forward)
 
     def turn_left(self):
-        turn_left = COMMAND_SEPARATOR + str(-700) + COMMAND_SEPARATOR + str(-700) + COMMAND_SEPARATOR + str(
-            700) + COMMAND_SEPARATOR + str(700) + COMMAND_TERMINATOR
+        turn_left = COMMAND_SEPARATOR + str(0) + COMMAND_SEPARATOR + str(0) + COMMAND_SEPARATOR + str(
+            600) + COMMAND_SEPARATOR + str(600) + COMMAND_TERMINATOR
         self.control.send_data(COMMAND.CMD_MOTOR + turn_left)
 
     def backwards(self):
@@ -50,8 +50,8 @@ class Steering:
         self.control.send_data(COMMAND.CMD_MOTOR + backwards)
 
     def turn_right(self):
-        turn_right = COMMAND_SEPARATOR + str(700) + COMMAND_SEPARATOR + str(700) + COMMAND_SEPARATOR + str(
-            -700) + COMMAND_SEPARATOR + str(-700) + COMMAND_TERMINATOR
+        turn_right = COMMAND_SEPARATOR + str(600) + COMMAND_SEPARATOR + str(600) + COMMAND_SEPARATOR + str(
+            0) + COMMAND_SEPARATOR + str(0) + COMMAND_TERMINATOR
         self.control.send_data(COMMAND.CMD_MOTOR + turn_right)
 
     def get_turn(self, line_angles):
