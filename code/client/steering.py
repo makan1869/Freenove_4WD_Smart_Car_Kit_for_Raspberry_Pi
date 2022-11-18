@@ -41,7 +41,7 @@ class Steering:
 
     def turn_left(self):
         turn_left = COMMAND_SEPARATOR + str(0) + COMMAND_SEPARATOR + str(0) + COMMAND_SEPARATOR + str(
-            600) + COMMAND_SEPARATOR + str(600) + COMMAND_TERMINATOR
+            800) + COMMAND_SEPARATOR + str(800) + COMMAND_TERMINATOR
         self.control.send_data(COMMAND.CMD_MOTOR + turn_left)
 
     def backwards(self):
@@ -50,7 +50,7 @@ class Steering:
         self.control.send_data(COMMAND.CMD_MOTOR + backwards)
 
     def turn_right(self):
-        turn_right = COMMAND_SEPARATOR + str(600) + COMMAND_SEPARATOR + str(600) + COMMAND_SEPARATOR + str(
+        turn_right = COMMAND_SEPARATOR + str(800) + COMMAND_SEPARATOR + str(800) + COMMAND_SEPARATOR + str(
             0) + COMMAND_SEPARATOR + str(0) + COMMAND_TERMINATOR
         self.control.send_data(COMMAND.CMD_MOTOR + turn_right)
 
