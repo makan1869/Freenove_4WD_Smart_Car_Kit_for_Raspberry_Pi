@@ -30,7 +30,7 @@ import os
 
 ksize = (5,5)
 
-files = os.listdir('pictures')
+files = os.listdir('pictures_1')
 files.sort(reverse=False)
 for file in files:
     if file.endswith("original.jpg"):

@@ -28,7 +28,7 @@ class VideoStreaming:
         self.lines = None
         self.face_x = 0
         self.face_y = 0
-        self.debug = False
+        self.debug = True
         self.ksize = (5, 5)
         try:
             self.video_socket.connect((ip, 8000))
