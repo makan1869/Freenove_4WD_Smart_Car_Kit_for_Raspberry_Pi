@@ -78,9 +78,9 @@ class VideoStreaming:
                 #     cv2.imwrite("pictures/%s.gray.jpg" % stamp, gray)
 
                 blur = cv2.blur(gray, self.ksize)
-                ret, white = cv2.threshold(blur, 150, 255, cv2.THRESH_BINARY_INV)
+                ret, white = cv2.threshold(blur, 130, 255, cv2.THRESH_BINARY_INV)
                 edges = cv2.Canny(white, 50, 150, apertureSize=3)
-                self.lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 80, minLineLength=20, maxLineGap=10)
+                self.lines = cv2.HoughLinesP(edges, 3, np.pi / 180, 100, minLineLength=30, maxLineGap=10)
                 # self.lines = cv2.HoughLines(edges, 1, np.pi / 180, 200)
                 if type(self.lines) is np.ndarray:
                     for line in self.lines:

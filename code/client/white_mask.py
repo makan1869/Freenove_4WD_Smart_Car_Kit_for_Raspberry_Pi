@@ -27,15 +27,27 @@ import os
 # cv2.waitKey(0)
 # cv2.destroyAllWindows()
 
+
+ksize = (5,5)
+
 files = os.listdir('pictures')
-files.sort(reverse=True)
+files.sort(reverse=False)
 for file in files:
     if file.endswith("original.jpg"):
         img = cv2.imread("pictures/%s"%file, cv2.IMREAD_COLOR)
-        line = cv2.imread(("pictures/%s"%file).replace("original.jpg","lines.jpg"), cv2.IMREAD_COLOR)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        blur = cv2.blur(gray, ksize)
+        ret, white = cv2.threshold(blur, 130, 255, cv2.THRESH_TOZERO)
+        edges = cv2.Canny(white, 50, 150, apertureSize=3)
+        lines = cv2.HoughLinesP(edges, 3, np.pi / 180, 100, minLineLength=30, maxLineGap=10)
+        if type(lines) is np.ndarray:
+            for line in lines:
+                x1, y1, x2, y2 = line[0]
+                cv2.line(gray, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        cv2.imshow('Original', img)
         cv2.imshow('Gray', gray)
-        cv2.imshow('Lines', line)
+        cv2.imshow('Edges', edges)
+        cv2.imshow('White', white)
         cv2.waitKey(0)
 
 cv2.destroyAllWindows()
