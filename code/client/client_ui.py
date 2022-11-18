@@ -798,7 +798,7 @@ class Ui_Client(object):
         self.Btn_Connect.setText(_translate("Client", "Connect"))
         self.Btn_Video.setText(_translate("Client", "Show Video"))
         self.Btn_Turn_Left.setText(_translate("Client", "Turn Left"))
-        self.Btn_Buzzer.setText(_translate("Client", "Buzzer"))
+        self.Btn_Buzzer.setText(_translate("Client", "Start"))
         self.Btn_Turn_Right.setText(_translate("Client", "Turn Right"))
         self.Btn_Backward.setText(_translate("Client", "Backward"))
         self.Btn_Forward.setText(_translate("Client", "Forward"))

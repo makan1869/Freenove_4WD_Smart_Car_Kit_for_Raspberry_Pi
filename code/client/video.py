@@ -19,8 +19,8 @@ class Direction(Enum):
 
 
 class VideoStreaming:
-    def __init__(self, ip, control):
-        self.steering = Steering(control)
+    def __init__(self, ip, steering):
+        self.steering = steering
         self.video_connection = None
         self.video_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.face_cascade = cv2.CascadeClassifier(r'haarcascade_frontalface_default.xml')

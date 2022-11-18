@@ -6,12 +6,17 @@ import collections
 class Steering:
 
     buffer = collections.deque(maxlen=5)
+    # forwardMovement = collections.deque(maxlen=12)
 
     def __init__(self, control):
+        self.fullStop = True
         self.control = control
         self.calibrate_servo()
 
     def steer(self, lines):
+        if self.fullStop:
+            self.stop()
+            return
         if lines is not None and len(lines) > 0:
             self.buffer.append(lines)
             line_angles = []
@@ -21,6 +26,7 @@ class Steering:
                     line_angles.append(self.line_to_deg([x1, y1, x2, y2]))
             self.get_turn(line_angles)
         else:
+            self.forwardMovement = []
             self.stop()
             # print('stop')
 
@@ -38,6 +44,13 @@ class Steering:
         forward = COMMAND_SEPARATOR + str(600) + COMMAND_SEPARATOR + str(600) + COMMAND_SEPARATOR + str(
             600) + COMMAND_SEPARATOR + str(600) + COMMAND_TERMINATOR
         self.control.send_data(COMMAND.CMD_MOTOR + forward)
+
+    # def forward(self, acceleration):
+    #     speed = 600 + ((600 * acceleration) // 5)
+    #     forward = COMMAND_SEPARATOR + str(speed) + COMMAND_SEPARATOR + str(speed) + COMMAND_SEPARATOR + str(
+    #         speed) + COMMAND_SEPARATOR + str(speed) + COMMAND_TERMINATOR
+    #     print('forward ' + str(speed))
+    #     self.control.send_data(COMMAND.CMD_MOTOR + forward)
 
     def turn_left(self):
         turn_left = COMMAND_SEPARATOR + str(0) + COMMAND_SEPARATOR + str(0) + COMMAND_SEPARATOR + str(
@@ -67,12 +80,16 @@ class Steering:
         if (negMedian == 0 or posMedian > 160):
             print('right')
             self.turn_right()
+            # self.forwardMovement = []
         elif (posMedian == 0 or negMedian > -100):
             print('left')
             self.turn_left()
+            # self.forwardMovement = []
         else:
             print('forward')
+            # self.forwardMovement.append(1)
             self.forward()
+            # self.forward(acceleration=sum(self.forwardMovement))
         pass
 
     def calibrate_servo(self):

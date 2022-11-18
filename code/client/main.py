@@ -29,6 +29,7 @@ class ClientWindow(QMainWindow, Ui_Client):
         self.target_host = '192.168.8.123'
         self.video_streaming = None
         self.control = None
+        self.steering = None
         self.servo1 = 90
         self.servo2 = 90
         self.label_FineServo2.setText("0")
@@ -134,7 +135,7 @@ class ClientWindow(QMainWindow, Ui_Client):
         self.Btn_Right.clicked.connect(self.on_btn_right)
 
         self.Btn_Buzzer.pressed.connect(self.on_btn_buzzer)
-        self.Btn_Buzzer.released.connect(self.on_btn_buzzer)
+        # self.Btn_Buzzer.released.connect(self.on_btn_buzzer)
 
         self.Btn_Connect.clicked.connect(self.on_btn_connect)
 
@@ -345,12 +346,17 @@ class ClientWindow(QMainWindow, Ui_Client):
         self.VSlider_Servo2.setValue(self.servo2)
 
     def on_btn_buzzer(self):
-        if self.Btn_Buzzer.text() == 'Buzzer':
-            self.control.send_data(COMMAND.CMD_BUZZER + COMMAND_SEPARATOR + '1' + COMMAND_TERMINATOR)
-            self.Btn_Buzzer.setText('Noise')
+        self.steering.fullStop = not self.steering.fullStop
+        if self.steering.fullStop:
+            self.Btn_Buzzer.setText('Start')
         else:
-            self.control.send_data(COMMAND.CMD_BUZZER + COMMAND_SEPARATOR + '0' + COMMAND_TERMINATOR)
-            self.Btn_Buzzer.setText('Buzzer')
+            self.Btn_Buzzer.setText('Stop')
+        # if self.Btn_Buzzer.text() == 'Buzzer':
+            # self.control.send_data(COMMAND.CMD_BUZZER + COMMAND_SEPARATOR + '1' + COMMAND_TERMINATOR)
+            # self.Btn_Buzzer.setText('Noise')
+        # else:
+        #     self.control.send_data(COMMAND.CMD_BUZZER + COMMAND_SEPARATOR + '0' + COMMAND_TERMINATOR)
+        #     self.Btn_Buzzer.setText('Buzzer')
 
     def on_btn_ultrasonic(self):
         if self.Btn_Ultrasonic.text() == "Ultrasonic":
@@ -511,7 +517,8 @@ class ClientWindow(QMainWindow, Ui_Client):
                 print('control error')
                 return
             try:
-                self.video_streaming = VideoStreaming(self.target_host, self.control)
+                self.steering = Steering(self.control)
+                self.video_streaming = VideoStreaming(self.target_host, self.steering)
                 self.streaming_thread = Thread(target=self.video_streaming.start_streaming)
                 self.streaming_thread.start()
             except Exception as e:
