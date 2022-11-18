@@ -83,9 +83,11 @@ class VideoStreaming:
                 blur = cv2.blur(gray, self.ksize)
                 ret, white = cv2.threshold(blur, 130, 255, cv2.THRESH_BINARY_INV)
                 edges = cv2.Canny(white, 50, 150, apertureSize=3)
-                self.lines = cv2.HoughLinesP(edges, 3, np.pi / 180, 100, minLineLength=30, maxLineGap=10)
+                lines = cv2.HoughLinesP(edges, 3, np.pi / 180, 100, minLineLength=30, maxLineGap=10)
+                cond = np.logical_and(np.logical_or(lines[:, 0 , 1] >= 150, lines[:, 0, 3] >= 150), abs(lines[:, 0, 1] - lines[:, 0, 3]) > 10 )
+                self.lines = lines[cond, :]
                 # self.lines = cv2.HoughLines(edges, 1, np.pi / 180, 200)
-                if type(self.lines) is np.ndarray:
+                if type(lines) is np.ndarray:
                     for line in self.lines:
                         x1, y1, x2, y2 = line[0]
                         cv2.line(gray, (x1, y1), (x2, y2), (0, 255, 0), 2)
